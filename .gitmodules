@@ -1,0 +1,7 @@
+[submodule "benchmark/simpler"]
+    path = benchmark/simpler
+    url = https://github.com/yi-yang929/simpler.git
+
+[submodule "grasper/anygrasp_ManiAgent"]
+    path = grasper/anygrasp_ManiAgent
+    url = https://github.com/yi-yang929/anygrasp_ManiAgent.git
