@@ -12,3 +12,4 @@ tqdm
 hf-xet==1.1.10
 ninja==1.13.0
 flash-attn==1.0.9
+timm==1.0.20

@@ -128,7 +128,7 @@ config = {
     "openai": {
         "api_key": os.getenv('OPENAI_API_KEY'),
         "base_url": os.getenv('OPENAI_BASE_URL', "https://api.openai.com/v1"),
-        "model": "grok-4",
+        "model": "gpt-5-2025-08-07",
         "model_detect": "gpt-5-2025-08-07"
     },
     "use_cache": False,
