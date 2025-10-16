@@ -1,100 +1,100 @@
 
 # ManiAgent: A Multi-Agent Framework for General-Purpose Manipulation Tasks
 
-## 项目简介
-ManiAgent是一个将通用操作任务拆解成多个agent相互配合完成任务的框架，此仓库实现的是在SimplerEnv仿真环境中进行ManiAgent算法部署，完成对应任务的功能。因此，我们开源了controller、object detector以及grasper的对应代码和prompt，reasoner以及更多部分的代码正在整理中，预计很快开源。
+## Project Overview
+ManiAgent is a framework that decomposes general-purpose manipulation tasks into multiple agents that collaborate to complete the tasks. This repository implements the deployment of the ManiAgent algorithm in the SimplerEnv simulation environment to accomplish corresponding tasks. Therefore, we have open-sourced the corresponding code and prompts for the controller, object detector, and grasper. The code for the reasoner and other parts is currently being organized and is expected to be open-sourced soon.
+
 
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-red?style=plastic&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2510.11660)
 [![Project Page](https://img.shields.io/badge/Project-Page-blue?style=plastic&logo=googlechrome&logoColor=white)](https://yi-yang929.github.io/ManiAgent/)
+[![中文版README](https://img.shields.io/badge/中文版-README-yellow?style=plastic&logo=googledocs&logoColor=white)](https://yi-yang929.github.io/ManiAgent/)
 
-<div style="text-align: center;">
+<p align="center">
+  <img src="./assets/method_overall_01.png" alt="Framework">
+  <br>
+  <em>Figure 1: Overall framework diagram.</em>
+</p>
 
-![Framework](./assets/method_overall_01.png)
-
-**图 1: 这是我们的整体框架图。**
-
-</div>
-
-## 目录
-- [项目简介](#项目简介)
-- [目录](#目录)
-- [推荐配置](#推荐配置)
-- [运行指南（conda环境）](#运行指南conda环境)
-  - [1. agent环境](#1-agent环境)
-  - [2. anygrasp环境](#2-anygrasp环境)
-  - [3. SimplerEnv环境](#3-simplerenv环境)
-    - [错误排查](#错误排查)
-  - [4. 运行](#4-运行)
-- [运行指南（docker）](#运行指南docker)
-- [自定义任务](#自定义任务)
-  - [无需配置Anygrasp环境的最小实现](#无需配置anygrasp环境的最小实现)
-  - [详细参数说明](#详细参数说明)
-    - [1. controller](#1-controller)
-    - [2. object detector](#2-object-detector)
-    - [3. prompt manager](#3-prompt-manager)
-    - [4. grasper](#4-grasper)
-    - [5. simpler](#5-simpler)
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Table of Contents](#table-of-contents)
+- [Recommended Configuration](#recommended-configuration)
+- [Running Guide (Conda Environment)](#running-guide-conda-environment)
+  - [1. Agent Environment](#1-agent-environment)
+  - [2. AnyGrasp Environment](#2-anygrasp-environment)
+  - [3. SimplerEnv Environment](#3-simplerenv-environment)
+    - [Troubleshooting](#troubleshooting)
+  - [4. Running](#4-running)
+- [Running Guide (Docker)](#running-guide-docker)
+- [Custom Tasks](#custom-tasks)
+  - [Minimal Implementation Without AnyGrasp Configuration](#minimal-implementation-without-anygrasp-configuration)
+  - [Detailed Parameter Explanations](#detailed-parameter-explanations)
+    - [1. Controller](#1-controller)
+    - [2. Object Detector](#2-object-detector)
+    - [3. Prompt Manager](#3-prompt-manager)
+    - [4. Grasper](#4-grasper)
+    - [5. Simpler](#5-simpler)
+- [Contact us](#contact-us)
     
 
 
 
 
-## 推荐配置
-GPU：16g或以上VRAM的Nvidia显卡
+## Recommended Configuration
+GPU: Nvidia graphics card with 16GB or more VRAM
 
-## 运行指南（conda环境）
+## Running Guide (Conda Environment)
 
-本项目使用flask打包多个不同的app，实现不同的功能，要实现功能，我们一共需要配置三个环境。
-我们建议使用11.8版本的cuda，以避免兼容性问题。
+This project uses Flask to package multiple different apps to implement various functions. To achieve the functionality, we need to configure three environments in total. We recommend using CUDA version 11.8 to avoid compatibility issues.
 
-首先，下载代码。
+First, download the code.
 ```bash
 git clone https://github.com/yi-yang929/maniagent.git
 cd maniagent
 git submodule update --init --recursive
 ```
 
-### 1. agent环境
+### 1. Agent Environment
 
-首先创建环境
+First, create the environment
 ```bash
 conda create -n agent python=3.10 -y
 conda activate agent
 ```
-配置LLM api和base_url(如果有的话)
+Configure the LLM API and base URL (if applicable)
 ```bashrc
 echo 'export OPENAI_API_KEY=your_api_key' >> ~/.bashrc
 echo 'export BASE_URL=https://api.openai.com/v1' >> ~/.bashrc
 source ~/.bashrc
 ```
-安装torch
+Install PyTorch
 ```bash
 pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118
 
 # Using Ali mirror
 pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 -f https://mirrors.aliyun.com/pytorch-wheels/cu118/
 ```
-安装其他包
+Install other packages
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. anygrasp环境
+### 2. AnyGrasp Environment
 
-请按照[`官方教程`](https://github.com/yi-yang929/anygrasp_ManiAgent.git)进行配置。
+Please follow the [official tutorial](https://github.com/yi-yang929/anygrasp_ManiAgent.git) for configuration.
 
-### 3. SimplerEnv环境
+### 3. SimplerEnv Environment
 
-首先创建环境
+First, create the environment
 ```bash
 conda create -n simpler_env python=3.10
 conda activate simpler_env
 ```
-安装ffmpeg
+Install FFmpeg
 ```bash
 sudo apt-get install ffmpeg
 ```
-安装SimplerEnv和ManiSkill
+Install SimplerEnv and ManiSkill
 ```bash
 cd ./benchmark/simpler/ManiSkill2_real2sim
 pip install -e .
@@ -102,11 +102,11 @@ cd ..
 pip install -e .
 pip install matplotlib mediapy omegaconf hydra-core && pip install numpy==1.24.4
 ```
-#### 错误排查
-如果你的simplerenv运行时出现x11相关的依赖问题，可以运行以下代码：
+#### Troubleshooting
+If you encounter X11-related dependency issues when running SimplerEnv, you can run the following code:
 ```bash
 su
-# （输入密码）
+# (Enter password)
 apt-get update && apt-get install -y libvulkan1 mesa-vulkan-drivers vulkan-tools libglvnd-dev
 mkdir -p /usr/share/vulkan/icd.d \
         /usr/share/glvnd/egl_vendor.d \
@@ -150,48 +150,48 @@ printf '%s\n' \
 '}' > /etc/vulkan/implicit_layer.d/nvidia_layers.json
 ```
 
-### 4. 运行
+### 4. Running
 
-如果各agent不在同设备上运行，则需要额外修改各app中的host参数，并进行端口映射，以形成有效通信。
+If the agents are not running on the same device, you need to additionally modify the host parameters in each app and perform port mapping to enable effective communication.
 
-controller启动：
+Start the controller:
 ```bash
 python controller/app.py
 ```
 
-object detector启动：
+Start the object detector:
 ```bash
 python object_detector/app.py
 ```
 
-grasper启动：
+Start the grasper:
 ```bash
 cd grasper/anygrasp_ManiAgent/grasp_detection
 python app.py
 
 ```
 
-启动仿真器
+Start the simulator:
 ```bash
 cd benchmark
 bash scripts/env_sh/simpler.sh ./evaluation/configs/simpler/example_simpler.yaml
 ```
 
-## 运行指南（docker）
-我们将agent环境和simpler_env仿真环境打包到了docker中，但是由于Anygrasp的限制，我们没有将Anygrasp打包到docker中，因此需要额外配置Anygrasp环境。请参考[官方教程](https://github.com/yi-yang929/anygrasp_ManiAgent.git)进行配置，并使用我们的[anygrasp](https://github.com/yi-yang929/anygrasp_ManiAgent.git)代码运行。
-首先，下载代码。
+## Running Guide (Docker)
+We have packaged the agent environment and the SimplerEnv simulation environment into Docker. However, due to restrictions with AnyGrasp, we have not included AnyGrasp in the Docker image, so you need to configure the AnyGrasp environment separately. Please refer to the [official tutorial](https://github.com/yi-yang929/anygrasp_ManiAgent.git) for configuration and use our [anygrasp](https://github.com/yi-yang929/anygrasp_ManiAgent.git) code to run it.
+First, download the code.
 ```bash
 git clone https://github.com/yi-yang929/maniagent.git
 cd maniagent
 git submodule update --init --recursive
 ```
-其次，请打开[dockerfile](Dockerfile)并修改`ENV`中的`OPENAI_API_KEY`和`BASE_URL`为你的api key和base url。
-同时，你也可以根据当地的网络情况选择合适的镜像源。
-构建docker
+Next, open the [dockerfile](Dockerfile) and modify the `ENV` section with your `OPENAI_API_KEY` and `BASE_URL`.
+At the same time, you can select an appropriate mirror source based on your local network conditions.
+Build the Docker image
 ```bash
 docker build -t maniagent .
 ```
-启动docker，注意端口的映射
+Start Docker, noting the port mappings
 ```bash
 docker run -it --gpus all \
 -v $(pwd):/workspace \
@@ -204,53 +204,54 @@ maniagent:latest \
 /bin/bash
 ```
 
-进入agent环境
+Enter the agent environment
 ```bash
 # （docker）
 conda init && source activate
 conda activate agent
 ```
-运行controller
+Run the controller
 ```bash
 # （docker）
 tmux new -s controller
 python controller/app.py
-# (ctrl+b，d退出tmux)
+# (Ctrl+B, D to detach from tmux)
 ```
-运行detector
+Run the detector
 ```bash
 # （docker）
 tmux new -s detector
 python detector/app.py
-# (ctrl+b，d退出tmux)
+# (Ctrl+B, D to detach from tmux)
 ```
-运行prompt_manager
+Run the prompt manager
 ```bash
 # （docker）
 tmux new -s prompt_manager
 python prompt_manager/app.py
-# (ctrl+b，d退出tmux)
+# (Ctrl+B, D to detach from tmux)
 ```
-运行grasper
+Run the grasper
 
 ```bash
 # (host)
 cd grasper/anygrasp_ManiAgent/grasp_detection
 python app.py
 ```
-进入仿真器环境并运行仿真
+Enter the simulator environment and run the simulation
 ```bash
 # （docker）
 tmux new -s simpler_env
 cd benchmark
 bash scripts/env_sh/simpler.sh ./evaluation/configs/simpler/example_simpler.yaml
-# (ctrl+b，d退出tmux)
+# (Ctrl+B, D to detach from tmux)
 ```
 
-## 自定义任务
+## Custom Tasks
 
-### 无需配置Anygrasp环境的最小实现
-如果你认为Anygrasp的配置较为复杂，可以使用我们的最小实现代码，由于SimplerEnv中的叠方块任务实际上无需使用Anygrasp，因此你可以在[simpler.sh](benchmark/scripts/env_sh/simpler.sh)中修改任务，例如改成下面的样式：
+### Minimal Implementation Without AnyGrasp Configuration
+
+If you find the AnyGrasp configuration to be relatively complex, you can use our minimal implementation code. Since the stacking blocks task in SimplerEnv does not actually require AnyGrasp, you can modify the task in [simpler.sh](benchmark/scripts/env_sh/simpler.sh), for example, to the following style:
 ```bash
 conda init && source activate
 conda activate simpler_env
@@ -285,48 +286,48 @@ for init_rng in 0 2 4; do
     --set robot widowx --set robot-init-x-range "0.147,0.147,1" --set robot-init-y-range "0.028,0.028,1";
 done
 ```
-然后直接运行
+Then run directly
 ```bash
 cd benchmark
 bash scripts/env_sh/simpler.sh ./evaluation/configs/simpler/example_simpler.yaml
 ```
-即可在不配置Anygrasp的情况下尝试我们的代码。（由于减少了抓取位姿偏移带来的影响，通过此种方式运行的仿真效果往往高于使用Anygrasp的表现，但是实际上这是牺牲了通用型带来的特定任务上的性能提升，因此建议此方法仅作为环境测试使用。）
+This allows you to try our code without configuring AnyGrasp. (Due to the reduction in grasp pose offset effects, the simulation performance using this method is often higher than using AnyGrasp. However, this sacrifices generality for performance gains on specific tasks, so we recommend this method only for environment testing.)
 
-### 详细参数说明
-下面介绍我们代码中可以较为方便定义的参数，在运行代码的时候，可以通过 `--param [value]` 的方式来修改参数。
-#### 1. controller
-| 参数 | 说明与示例 |
+### Detailed Parameter Explanations
+The following describes the parameters that can be easily defined in our code. When running the code, you can modify parameters using the `--param [value]` format.
+#### 1. Controller
+| Parameter | Description and Example |
 | :------- | :---------- |
-| `--model` | 指定输出动作所用的LLM模型<br>**示例**: `--model gpt-5 ` |
-| `--model_detect` | 指定得到检测物品信息的LLM模型（建议选择较为轻量的模型以加快运行速度）<br>**示例**: `--model_detect gpt-5 ` |
-| `--port` | 指定服务所部署的端口<br>**示例**: `--port 9500 ` |
-| `--host` | 指定服务所部署的ip<br>**示例**: `--host 127.0.0.1 ` |
-| `--use-cache` | (布尔值)决定是否使用参数化动作序列缓存<br>**示例**: `--use-cache ` |
+| `--model` | Specifies the LLM model used for outputting actions<br>**Example**: `--model gpt-5 ` |
+| `--model_detect` | Specifies the LLM model used for obtaining detection item information (recommend a lightweight model to speed up runtime)<br>**Example**: `--model_detect gpt-5 ` |
+| `--port` | Specifies the port on which the service is deployed<br>**Example**: `--port 9500 ` |
+| `--host` | Specifies the IP on which the service is deployed<br>**Example**: `--host 127.0.0.1 ` |
+| `--use-cache` | (Boolean) Determines whether to use parameterized action sequence caching<br>**Example**: `--use-cache ` |
 
 #### 2. object detector
-| 参数 | 说明与示例 |
+| Parameter | Description and Example |
 | :------- | :---------- |
-| `--detect-model` | 指定所用的检测模型<br>**示例**: `--detect-model microsoft/Florence-2-large ` |
-| `--vlm-model` | 指定当出现多个检测物体，进行物体筛选所用的VLM（注意选取具有图片理解功能的VLM）<br>**示例**: `--vlm-model gpt-5` |
-| `--port` | 指定服务所部署的端口<br>**示例**: `--port 4399 ` |
-| `--host` | 指定服务所部署的ip<br>**示例**: `--host 127.0.0.1 ` |
+| `--detect-model` | Specifies the detection model used<br>**Example**: `--detect-model microsoft/Florence-2-large ` |
+| `--vlm-model` | Specifies the VLM used for object selection when multiple detected objects appear (note to select a VLM with image understanding capabilities)<br>**Example**: `--vlm-model gpt-5` |
+| `--port` | Specifies the port on which the service is deployed<br>**Example**: `--port 4399 ` |
+| `--host` | Specifies the IP on which the service is deployed<br>**Example**: `--host 127.0.0.1 ` |
 
 #### 3. prompt manager
-| 参数 | 说明与示例 |
+| Parameter | Description and Example |
 | :------- | :---------- |
-| `--port` | 指定服务所部署的端口<br>**示例**: `--port 4599 ` |
-| `--host` | 指定服务所部署的ip<br>**示例**: `--host 127.0.0.1 ` |
+| `--port` | Specifies the port on which the service is deployed<br>**Example**: `--port 4599 ` |
+| `--host` | Specifies the IP on which the service is deployed<br>**Example**: `--host 127.0.0.1 ` |
 
 #### 4. grasper
-| 参数 | 说明与示例 |
+| Parameter | Description and Example |
 | :------- | :---------- |
-| `--port` | 指定服务所部署的端口<br>**示例**: `--port 4499 ` |
-| `--host` | 指定服务所部署的ip<br>**示例**: `--host 127.0.0.1 ` |
+| `--port` | Specifies the port on which the service is deployed<br>**Example**: `--port 4499 ` |
+| `--host` | Specifies the IP on which the service is deployed<br>**Example**: `--host 127.0.0.1 ` |
 
 #### 5. simpler
-参数可以通过对[simpler.sh](benchmark/scripts/env_sh/simpler.sh)和[example_simpler.yaml](benchmark/evaluation/configs/simpler/example_simpler.yaml)进行修改来定义。具体可参考[上面章节](#无需配置Anygrasp环境的最小实现)的描述，此处不再赘述。
+Parameters can be defined by modifying [simpler.sh](benchmark/scripts/env_sh/simpler.sh) and [example_simpler.yaml](benchmark/evaluation/configs/simpler/example_simpler.yaml). For details, refer to the description in the [section above](#minimal-implementation-without-anygrasp-configuration); it will not be repeated here.
 
 
-## 联系我们
+## Contact Us
 
-如有问题，请通过邮箱联系：yangyi_00929@163.com
+If you have any questions, please contact us via email: [yangyi_00929@163.com](mailto:yangyi_00929@163.com).
