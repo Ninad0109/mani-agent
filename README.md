@@ -71,7 +71,7 @@ source ~/.bashrc
 ```bash
 pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118
 
-# If you are in China
+# Using Ali mirror
 pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 -f https://mirrors.aliyun.com/pytorch-wheels/cu118/
 ```
 安装其他包
@@ -81,7 +81,7 @@ pip install -r requirements.txt
 
 ### 2. anygrasp环境
 
-请按照[`官方教程`](grasper/anygrasp_ManiAgent/README.md)进行配置。
+请按照[`官方教程`](https://github.com/yi-yang929/anygrasp_ManiAgent.git)进行配置。
 
 ### 3. SimplerEnv环境
 
@@ -178,7 +178,7 @@ bash scripts/env_sh/simpler.sh ./evaluation/configs/simpler/example_simpler.yaml
 ```
 
 ## 运行指南（docker）
-我们将agent环境和simpler_env仿真环境打包到了docker中，但是由于Anygrasp的限制，我们没有将Anygrasp打包到docker中，因此需要额外配置Anygrasp环境。请参考官方教程进行配置，并使用我们的[anygrasp](grasper/anygrasp_ManiAgent/)代码运行。
+我们将agent环境和simpler_env仿真环境打包到了docker中，但是由于Anygrasp的限制，我们没有将Anygrasp打包到docker中，因此需要额外配置Anygrasp环境。请参考[官方教程](https://github.com/yi-yang929/anygrasp_ManiAgent.git)进行配置，并使用我们的[anygrasp](https://github.com/yi-yang929/anygrasp_ManiAgent.git)代码运行。
 首先，下载代码。
 ```bash
 git clone https://github.com/yi-yang929/maniagent.git
