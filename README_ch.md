@@ -6,7 +6,7 @@ ManiAgent是一个将通用操作任务拆解成多个agent相互配合完成任
 
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-red?style=plastic&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2510.11660)
 [![Project Page](https://img.shields.io/badge/Project-Page-blue?style=plastic&logo=googlechrome&logoColor=white)](https://yi-yang929.github.io/ManiAgent/)
-[![English README](https://img.shields.io/badge/English-README-yellow?style=plastic&logo=googledocs&logoColor=white)](https://yi-yang929.github.io/ManiAgent/)
+[![English README](https://img.shields.io/badge/English-README-yellow?style=plastic&logo=googledocs&logoColor=white)](./README.md)
 
 
 <p align="center">

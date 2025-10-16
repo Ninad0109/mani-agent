@@ -7,7 +7,7 @@ ManiAgent is a framework that decomposes general-purpose manipulation tasks into
 
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-red?style=plastic&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2510.11660)
 [![Project Page](https://img.shields.io/badge/Project-Page-blue?style=plastic&logo=googlechrome&logoColor=white)](https://yi-yang929.github.io/ManiAgent/)
-[![中文版README](https://img.shields.io/badge/中文版-README-yellow?style=plastic&logo=googledocs&logoColor=white)](https://yi-yang929.github.io/ManiAgent/)
+[![中文版README](https://img.shields.io/badge/中文版-README-yellow?style=plastic&logo=googledocs&logoColor=white)](./README_ch.md)
 
 <p align="center">
   <img src="./assets/method_overall_01.png" alt="Framework">
