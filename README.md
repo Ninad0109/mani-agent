@@ -7,6 +7,38 @@ ManiAgent是一个将通用操作任务拆解成多个agent相互配合完成任
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-red?style=plastic&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2510.11660)
 [![Project Page](https://img.shields.io/badge/Project-Page-blue?style=plastic&logo=googlechrome&logoColor=white)](https://yi-yang929.github.io/ManiAgent/)
 
+<div style="text-align: center;">
+
+![Framework](./assets/method_overall_01.png)
+
+**图 1: 这是我们的整体框架图。**
+
+</div>
+
+## 目录
+- [项目简介](#项目简介)
+- [目录](#目录)
+- [推荐配置](#推荐配置)
+- [运行指南（conda环境）](#运行指南conda环境)
+  - [1. agent环境](#1-agent环境)
+  - [2. anygrasp环境](#2-anygrasp环境)
+  - [3. SimplerEnv环境](#3-simplerenv环境)
+    - [错误排查](#错误排查)
+  - [4. 运行](#4-运行)
+- [运行指南（docker）](#运行指南docker)
+- [自定义任务](#自定义任务)
+  - [无需配置Anygrasp环境的最小实现](#无需配置anygrasp环境的最小实现)
+  - [详细参数说明](#详细参数说明)
+    - [1. controller](#1-controller)
+    - [2. object detector](#2-object-detector)
+    - [3. prompt manager](#3-prompt-manager)
+    - [4. grasper](#4-grasper)
+    - [5. simpler](#5-simpler)
+    
+
+
+
+
 ## 推荐配置
 GPU：16g或以上VRAM的Nvidia显卡
 
@@ -118,7 +150,7 @@ printf '%s\n' \
 '}' > /etc/vulkan/implicit_layer.d/nvidia_layers.json
 ```
 
-## 运行
+### 4. 运行
 
 如果各agent不在同设备上运行，则需要额外修改各app中的host参数，并进行端口映射，以形成有效通信。
 
@@ -215,7 +247,84 @@ bash scripts/env_sh/simpler.sh ./evaluation/configs/simpler/example_simpler.yaml
 # (ctrl+b，d退出tmux)
 ```
 
+## 自定义任务
 
+### 无需配置Anygrasp环境的最小实现
+如果你认为Anygrasp的配置较为复杂，可以使用我们的最小实现代码，由于SimplerEnv中的叠方块任务实际上无需使用Anygrasp，因此你可以在[simpler.sh](benchmark/scripts/env_sh/simpler.sh)中修改任务，例如改成下面的样式：
+```bash
+conda init && source activate
+conda activate simpler_env
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the project root directory (two levels up from scripts/env_sh/)
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Set default configuration file path
+config_path="$PROJECT_ROOT/evaluation/configs/simpler/example_simpler.yaml"
+
+# Check if configuration file parameter is passed
+if [[ $# -gt 0 ]]; then
+    config_path="$1"
+fi
+
+# Verify if configuration file exists
+if [[ ! -f "$config_path" ]]; then
+    echo "[ERROR] Configuration file does not exist: $config_path"
+    exit 1
+fi
+
+echo "[INFO] Using configuration file: $config_path"
+
+# Execute evaluation
+for init_rng in 0 2 4; do
+    python $PROJECT_ROOT/evaluation/run_simpler_evaluation.py --config ${config_path} \
+    --set octo-init-rng ${init_rng} --set additional-env-save-tags octo_init_rng_${init_rng} \
+    --set env-name StackGreenCubeOnYellowCubeBakedTexInScene-v0 --set scene-name bridge_table_1_v1 \
+    --set rgb-overlay-path simpler/ManiSkill2_real2sim/data/real_inpainting/bridge_real_eval_1.png \
+    --set robot widowx --set robot-init-x-range "0.147,0.147,1" --set robot-init-y-range "0.028,0.028,1";
+done
+```
+然后直接运行
+```bash
+cd benchmark
+bash scripts/env_sh/simpler.sh ./evaluation/configs/simpler/example_simpler.yaml
+```
+即可在不配置Anygrasp的情况下尝试我们的代码。（由于减少了抓取位姿偏移带来的影响，通过此种方式运行的仿真效果往往高于使用Anygrasp的表现，但是实际上这是牺牲了通用型带来的特定任务上的性能提升，因此建议此方法仅作为环境测试使用。）
+
+### 详细参数说明
+下面介绍我们代码中可以较为方便定义的参数，在运行代码的时候，可以通过 `--param [value]` 的方式来修改参数。
+#### 1. controller
+| 参数 | 说明与示例 |
+| :------- | :---------- |
+| `--model` | 指定输出动作所用的LLM模型<br>**示例**: `--model gpt-5 ` |
+| `--model_detect` | 指定得到检测物品信息的LLM模型（建议选择较为轻量的模型以加快运行速度）<br>**示例**: `--model_detect gpt-5 ` |
+| `--port` | 指定服务所部署的端口<br>**示例**: `--port 9500 ` |
+| `--host` | 指定服务所部署的ip<br>**示例**: `--host 127.0.0.1 ` |
+| `--use-cache` | (布尔值)决定是否使用参数化动作序列缓存<br>**示例**: `--use-cache ` |
+
+#### 2. object detector
+| 参数 | 说明与示例 |
+| :------- | :---------- |
+| `--detect-model` | 指定所用的检测模型<br>**示例**: `--detect-model microsoft/Florence-2-large ` |
+| `--vlm-model` | 指定当出现多个检测物体，进行物体筛选所用的VLM（注意选取具有图片理解功能的VLM）<br>**示例**: `--vlm-model gpt-5` |
+| `--port` | 指定服务所部署的端口<br>**示例**: `--port 4399 ` |
+| `--host` | 指定服务所部署的ip<br>**示例**: `--host 127.0.0.1 ` |
+
+#### 3. prompt manager
+| 参数 | 说明与示例 |
+| :------- | :---------- |
+| `--port` | 指定服务所部署的端口<br>**示例**: `--port 4599 ` |
+| `--host` | 指定服务所部署的ip<br>**示例**: `--host 127.0.0.1 ` |
+
+#### 4. grasper
+| 参数 | 说明与示例 |
+| :------- | :---------- |
+| `--port` | 指定服务所部署的端口<br>**示例**: `--port 4499 ` |
+| `--host` | 指定服务所部署的ip<br>**示例**: `--host 127.0.0.1 ` |
+
+#### 5. simpler
+参数可以通过对[simpler.sh](benchmark/scripts/env_sh/simpler.sh)和[example_simpler.yaml](benchmark/evaluation/configs/simpler/example_simpler.yaml)进行修改来定义。具体可参考[上面章节](#无需配置Anygrasp环境的最小实现)的描述，此处不再赘述。
 
 
 ## 联系我们

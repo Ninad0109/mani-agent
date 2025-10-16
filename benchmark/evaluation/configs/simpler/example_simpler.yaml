@@ -8,4 +8,4 @@ action_ensemble_horizon: 7
 adaptive_ensemble_alpha: 0.1
 action_ensemble: false
 
-output_dir: ./result_simpler_grok-4
+output_dir: ./result_simpler_gpt-5
