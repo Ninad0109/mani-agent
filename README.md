@@ -64,7 +64,7 @@ conda activate agent
 Configure the LLM API and base URL (if applicable)
 ```bashrc
 echo 'export OPENAI_API_KEY=your_api_key' >> ~/.bashrc
-echo 'export BASE_URL=https://api.openai.com/v1' >> ~/.bashrc
+echo 'export OPENAI_BASE_URL=https://api.openai.com/v1' >> ~/.bashrc
 source ~/.bashrc
 ```
 Install PyTorch
