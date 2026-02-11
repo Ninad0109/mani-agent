@@ -1,12 +1,10 @@
 FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Asia/Shanghai
+ENV TZ=UTC
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Install dependencies
-RUN sed -i -e "s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list && \
-    sed -i -e "s/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list && \
-    rm -rf /var/lib/apt/lists/* && \
+RUN rm -rf /var/lib/apt/lists/* && \
     apt-get clean && apt-get update -y && \
     apt-get install --assume-yes --fix-missing build-essential && \
     apt-get install -y curl  && \
@@ -28,22 +26,14 @@ RUN sed -i -e "s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sou
 RUN sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list && apt-get update && apt-get build-dep -y mesa && \
     rm -rf /var/lib/apt/lists/* && apt-get clean
 
-# Install Conda（tuna）
-RUN wget -q https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-py310_25.7.0-2-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+# Install Conda
+RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-py310_25.7.0-2-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -p /opt/conda && \
     rm /tmp/miniconda.sh
 
-# Install Conda
-# RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-py310_25.5.1-1-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-#     bash /tmp/miniconda.sh -b -p /opt/conda && \
-#     rm /tmp/miniconda.sh
-
 RUN /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
     /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-RUN /opt/conda/bin/conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ && \
-    /opt/conda/bin/conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ && \
-    /opt/conda/bin/conda config --set show_channel_urls yes && \
-    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
 ENV PATH=/opt/conda/bin:$PATH
 
 # Install Vulkan libraries
@@ -93,10 +83,8 @@ RUN mkdir -p /usr/share/vulkan/icd.d \
 WORKDIR /app
 COPY . /app
 
-# tuna mirrors
-RUN python -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple --upgrade pip
-RUN pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
-
+# Upgrade pip
+RUN python -m pip install --upgrade pip
 
 # Install simpler environment
 RUN /opt/conda/bin/conda create -n simpler_env python=3.10 -y && \
@@ -110,10 +98,10 @@ RUN /opt/conda/bin/conda create -n simpler_env python=3.10 -y && \
 # Install agent environment
 RUN /opt/conda/bin/conda create -n agent python=3.10 -y && \
     /bin/bash -c "source activate agent && \
-        pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 -f https://mirrors.aliyun.com/pytorch-wheels/cu118/ && \
+        pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118 && \
         pip install -r requirements.txt"
 
 # environment
 ENV OPENAI_API_KEY=your_api_key
 ENV BASE_URL=https://api.openai.com/v1
-ENV HF_ENDPOINT=https://hf-mirror.com
+ENV HF_ENDPOINT=https://huggingface.co
