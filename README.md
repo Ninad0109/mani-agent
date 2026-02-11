@@ -7,7 +7,6 @@ ManiAgent is a framework that decomposes general-purpose manipulation tasks into
 
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-red?style=plastic&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2510.11660)
 [![Project Page](https://img.shields.io/badge/Project-Page-blue?style=plastic&logo=googlechrome&logoColor=white)](https://yi-yang929.github.io/ManiAgent/)
-[![中文版README](https://img.shields.io/badge/中文版-README-yellow?style=plastic&logo=googledocs&logoColor=white)](./README_ch.md)
 
 <p align="center">
   <img src="./assets/method_overall_01.png" alt="Framework">
@@ -39,7 +38,6 @@ ManiAgent is a framework that decomposes general-purpose manipulation tasks into
 
 
 
-
 ## Recommended Configuration
 GPU: Nvidia graphics card with 16GB or more VRAM
 
@@ -49,8 +47,8 @@ This project uses Flask to package multiple different apps to implement various 
 
 First, download the code.
 ```bash
-git clone https://github.com/yi-yang929/maniagent.git
-cd maniagent
+git clone https://github.com/Ninad0109/mani-agent.git
+cd mani-agent
 git submodule update --init --recursive
 ```
 
@@ -70,9 +68,6 @@ source ~/.bashrc
 Install PyTorch
 ```bash
 pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118
-
-# Using Ali mirror
-pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 -f https://mirrors.aliyun.com/pytorch-wheels/cu118/
 ```
 Install other packages
 ```bash
@@ -81,7 +76,7 @@ pip install -r requirements.txt
 
 ### 2. AnyGrasp Environment
 
-Please follow the [official tutorial](https://github.com/yi-yang929/anygrasp_ManiAgent.git) for configuration.
+Please follow the [official tutorial](https://github.com/graspnet/anygrasp_sdk) for configuration.
 
 ### 3. SimplerEnv Environment
 
@@ -161,7 +156,7 @@ python controller/app.py
 
 Start the object detector:
 ```bash
-python object_detector/app.py
+python detector/app.py
 ```
 
 Start the grasper:
@@ -178,11 +173,12 @@ bash scripts/env_sh/simpler.sh ./evaluation/configs/simpler/example_simpler.yaml
 ```
 
 ## Running Guide (Docker)
-We have packaged the agent environment and the SimplerEnv simulation environment into Docker. However, due to restrictions with AnyGrasp, we have not included AnyGrasp in the Docker image, so you need to configure the AnyGrasp environment separately. Please refer to the [official tutorial](https://github.com/yi-yang929/anygrasp_ManiAgent.git) for configuration and use our [anygrasp](https://github.com/yi-yang929/anygrasp_ManiAgent.git) code to run it.
+We have packaged the agent environment and the SimplerEnv simulation environment into Docker. However, due to restrictions with AnyGrasp, we have not included AnyGrasp in the Docker image, so you need to configure the AnyGrasp environment separately. Please refer to the [official tutorial](https://github.com/graspnet/anygrasp_sdk) for configuration.
+
 First, download the code.
 ```bash
-git clone https://github.com/yi-yang929/maniagent.git
-cd maniagent
+git clone https://github.com/Ninad0109/mani-agent.git
+cd mani-agent
 git submodule update --init --recursive
 ```
 Next, open the [dockerfile](Dockerfile) and modify the `ENV` section with your `OPENAI_API_KEY` and `BASE_URL`.
@@ -206,27 +202,27 @@ maniagent:latest \
 
 Enter the agent environment
 ```bash
-# （docker）
+# (docker)
 conda init && source activate
 conda activate agent
 ```
 Run the controller
 ```bash
-# （docker）
+# (docker)
 tmux new -s controller
 python controller/app.py
 # (Ctrl+B, D to detach from tmux)
 ```
 Run the detector
 ```bash
-# （docker）
+# (docker)
 tmux new -s detector
 python detector/app.py
 # (Ctrl+B, D to detach from tmux)
 ```
 Run the prompt manager
 ```bash
-# （docker）
+# (docker)
 tmux new -s prompt_manager
 python prompt_manager/app.py
 # (Ctrl+B, D to detach from tmux)
@@ -240,7 +236,7 @@ python app.py
 ```
 Enter the simulator environment and run the simulation
 ```bash
-# （docker）
+# (docker)
 tmux new -s simpler_env
 cd benchmark
 bash scripts/env_sh/simpler.sh ./evaluation/configs/simpler/example_simpler.yaml
@@ -330,4 +326,4 @@ Parameters can be defined by modifying [simpler.sh](benchmark/scripts/env_sh/sim
 
 ## Contact Us
 
-If you have any questions, please contact us via email: [yangyi_00929@163.com](mailto:yangyi_00929@163.com).
+For questions or issues, please open an issue on GitHub.
